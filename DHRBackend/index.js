@@ -1,0 +1,56 @@
+import express from "express";
+import cors from "cors";
+import workerRoutes from "./routes/workerRoutes.js";
+import doctorRoutes from "./routes/doctorRoutes.js";
+import patientRoutes from "./routes/patientRoutes.js";
+import prescriptionRoutes from "./routes/prescriptionRoutes.js";
+import vitalsRoutes from "./routes/vitalsRoutes.js";
+import medicalRecordRoutes from "./routes/medicalRecordRoutes.js";
+import appointmentRoutes from "./routes/appointmentRoutes.js";
+
+const app = express();
+app.use(cors());
+app.use(express.json()); // <--- Make sure you parse JSON body
+
+app.get("/", (req, res) => {
+  res.send("Hello, welcome to Digital Health Record Backend");
+});
+
+// API Routes
+app.use("/api/worker", workerRoutes);
+
+// Doctor Dashboard Routes
+app.use("/api/doctor", doctorRoutes);
+app.use("/api/patient", patientRoutes);
+app.use("/api/prescription", prescriptionRoutes);
+app.use("/api/vitals", vitalsRoutes);
+app.use("/api/medical-record", medicalRecordRoutes);
+app.use("/api/appointment", appointmentRoutes);
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error("Error:", err);
+  res.status(err.status || 500).json({
+    error: err.message || "Internal server error",
+    details: process.env.NODE_ENV === 'development' ? err.stack : undefined
+  });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    error: "Route not found"
+  });
+});
+
+app.listen(5000, () => {
+  console.log("Server running at http://localhost:5000/");
+  console.log("Available routes:");
+  console.log("  - /api/worker");
+  console.log("  - /api/doctor");
+  console.log("  - /api/patient");
+  console.log("  - /api/prescription");
+  console.log("  - /api/vitals");
+  console.log("  - /api/medical-record");
+  console.log("  - /api/appointment");
+});
