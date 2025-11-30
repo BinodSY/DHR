@@ -7,6 +7,7 @@ import prescriptionRoutes from "./routes/prescriptionRoutes.js";
 import vitalsRoutes from "./routes/vitalsRoutes.js";
 import medicalRecordRoutes from "./routes/medicalRecordRoutes.js";
 import appointmentRoutes from "./routes/appointmentRoutes.js";
+import translateRoutes from "./routes/translateRoutes.js";
 
 const app = express();
 app.use(cors());
@@ -18,7 +19,9 @@ app.get("/", (req, res) => {
 
 // API Routes
 app.use("/api/worker", workerRoutes);
+// for translation
 
+app.use("/api/translate", translateRoutes);
 // Doctor Dashboard Routes
 app.use("/api/doctor", doctorRoutes);
 app.use("/api/patient", patientRoutes);
