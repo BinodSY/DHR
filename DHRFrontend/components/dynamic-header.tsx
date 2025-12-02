@@ -25,6 +25,11 @@ const featureConfig = {
     title: "Dashboard",
     subtitle: "Government of India",
   },
+  "/dashboard/worker": {
+    icon: BarChart3,
+    title: "Worker Health Dashboard",
+    subtitle: "Government of India",
+  },
   "/health-id": {
     icon: Heart,
     title: "Health ID",
@@ -69,19 +74,30 @@ const featureConfig = {
 
 interface DynamicHeaderProps {
   children?: React.ReactNode
+  leftChildren?: React.ReactNode
 }
 
-export function DynamicHeader({ children }: DynamicHeaderProps) {
+export function DynamicHeader({ children, leftChildren }: DynamicHeaderProps) {
   const pathname = usePathname()
-  const config = featureConfig[pathname as keyof typeof featureConfig] || featureConfig["/"]
+  const rawPath = pathname ?? "/"
+  // normalize: remove trailing slash except for root "/"
+  const currentPath = rawPath !== "/" && rawPath.endsWith("/") ? rawPath.slice(0, -1) : rawPath
+  // prefer the longest matching route key (most specific); normalize keys as well
+  const sortedKeys = Object.keys(featureConfig).sort((a, b) => b.length - a.length)
+  const matchedKey = sortedKeys.find((key) => {
+    const k = key !== "/" && key.endsWith("/") ? key.slice(0, -1) : key
+    return k === "/" ? currentPath === "/" : currentPath === k || currentPath.startsWith(k + "/")
+  })
+  const config = (matchedKey && featureConfig[matchedKey as keyof typeof featureConfig]) || featureConfig["/"]
   const IconComponent = config.icon
   const [isProfileOpen, setIsProfileOpen] = useState(false)
 
   return (
     <>
       <header className="bg-blue-900 text-white px-6 py-3 flex items-center justify-between shadow-lg">
-        {/* Left Side - Feature Info */}
+        {/* Left Side - Left Children and Feature Info */}
         <div className="flex items-center gap-3">
+          {leftChildren}
           <div className="bg-white/10 p-2 rounded-lg">
             <IconComponent className="h-6 w-6 text-white" />
           </div>
