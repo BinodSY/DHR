@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-
+const BASE_URL =  process.env.NEXT_PUBLIC_BACKEND_URL;
 export async function POST(request: NextRequest) {
   try {
+    if (!BASE_URL) {
+      return NextResponse.json({ error: "Backend URL is not configured" }, { status: 500 })
+    }
+
     const body = await request.json()
     const { audio, sourceLanguage, targetLanguage } = body
 
@@ -10,7 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Proxy the request to the backend
-    const backendResponse = await fetch('http://localhost:5000/api/translate', {
+    const backendResponse = await fetch(BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
