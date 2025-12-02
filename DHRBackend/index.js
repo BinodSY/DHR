@@ -11,9 +11,11 @@ import vitalsRoutes from "./routes/vitalsRoutes.js";
 import medicalRecordRoutes from "./routes/medicalRecordRoutes.js";
 import appointmentRoutes from "./routes/appointmentRoutes.js";
 import translateRoutes from "./routes/translateRoutes.js";
-
+import { corsOptions } from "./config/corsConfig.js";
 const app = express();
-app.use(cors());
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));  // handle preflight
+
 app.use(express.json({ limit: '10mb' })); // <--- Make sure you parse JSON body with increased limit for audio
 
 app.get("/", (req, res) => {
