@@ -47,7 +47,7 @@ function GovtDashboardLayoutContent({ children }: { children: React.ReactNode })
     },
     {
       id: "disease-surveillance",
-      label: t('diseaseSurveillance'),
+      label: "District View",
       icon: Activity,
       path: "/dashboard/govt/disease-surveillance",
       badge: { text: "12", color: "bg-red-500 text-white text-xs" },
@@ -228,6 +228,13 @@ function GovtDashboardLayoutContent({ children }: { children: React.ReactNode })
         </nav>
 
         <div className="p-4 border-t border-gray-100 bg-gray-50/50">
+                <button 
+                    onClick={handleLogout} 
+                    className="w-full mt-2 inline-flex items-center justify-center text-red-600 hover:bg-red-50 text-sm font-medium h-9 rounded-md transition-colors border border-red-300"
+                >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    {t('logout')}
+                </button>
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm">
               <User className="h-4 w-4 text-gray-600" />
@@ -246,6 +253,7 @@ function GovtDashboardLayoutContent({ children }: { children: React.ReactNode })
       <div className="flex-1 flex flex-col h-full overflow-hidden relative">
           
         {/* Mobile Header (Visible only on Mobile) */}
+        {pathname !== "/dashboard/govt" && (
         <header className="md:hidden h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 shrink-0 z-20">
             <div className="flex items-center gap-3">
                 <button onClick={() => setDrawerOpen(true)} className="p-2 -ml-2 hover:bg-gray-100 rounded-md">
@@ -261,8 +269,10 @@ function GovtDashboardLayoutContent({ children }: { children: React.ReactNode })
                 </button>
             </div>
         </header>
+       )}
 
         {/* Desktop Header (Sticky at top of content area) */}
+        {pathname !== "/dashboard/govt" && (
         <header className="hidden md:flex h-16 bg-white/80 backdrop-blur-md border-b border-gray-200 items-center justify-between px-6 shrink-0 sticky top-0 z-10">
           <div>
             <h1 className="text-xl font-bold text-gray-900">{currentPageConfig.title}</h1>
@@ -277,6 +287,7 @@ function GovtDashboardLayoutContent({ children }: { children: React.ReactNode })
               </span>
               <span className="text-xs font-medium text-green-700">{t('systemLive')}</span>
             </div>
+            
 
             <div className="h-6 w-px bg-gray-200 mx-1"></div>
             
@@ -298,6 +309,7 @@ function GovtDashboardLayoutContent({ children }: { children: React.ReactNode })
             ))}
           </div>
         </header>
+       )}
 
         {/* Scrollable Page Content */}
         <main className="flex-1 overflow-y-auto bg-gray-50 p-4 md:p-6 scroll-smooth">

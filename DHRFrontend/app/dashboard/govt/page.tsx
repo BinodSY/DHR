@@ -1,101 +1,61 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { AlertTriangle, Users, CheckCircle, Filter, MoreVertical, MessageCircle, X, Download, TrendingUp, RefreshCcw, MapPin, ArrowRight } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton" // Assuming you have this, if not I use a fallback div
-import KeralaHeatmap from "./components/KeralaHeatmap";
+import { useState } from "react"
+import { AlertTriangle, Users, CheckCircle, MoreVertical, MessageCircle, X } from "lucide-react"
 
-// --- 1. DATA INTERFACES (The contract for your Backend) ---
-interface DashboardStats {
-  totalWorkers: number
-  workersTrend: number
-  statesCount: number
-  highRiskCount: number
-  activeRegistrations: number
-}
-
-interface OriginStateData {
-  state: string
-  count: number
-  percentage: number
-}
-
-// --- 2. MAIN COMPONENT ---
 export default function SehatSetuDashboard() {
   const [isBotOpen, setIsBotOpen] = useState(false)
-  
-  // State for Data
-  const [isLoading, setIsLoading] = useState(true)
-  const [stats, setStats] = useState<DashboardStats | null>(null)
-  const [stateDistribution, setStateDistribution] = useState<OriginStateData[]>([])
-  
-  // State for Filters
-  const [selectedDistrict, setSelectedDistrict] = useState("All Districts")
-  const [selectedOrigin, setSelectedOrigin] = useState("All Origin States")
-
-  // --- 3. DATA FETCHING SIMULATION (Replace this with real API call later) ---
-  const fetchData = async () => {
-    setIsLoading(true)
-    try {
-      // SIMULATING NETWORK REQUEST (Remove setTimeout when connecting to backend)
-      await new Promise(resolve => setTimeout(resolve, 1500))
-
-      // MOCK RESPONSE
-      setStats({
-        totalWorkers: 48247,
-        workersTrend: 12.5,
-        statesCount: 14,
-        highRiskCount: 1847,
-        activeRegistrations: 342
-      })
-
-      setStateDistribution([
-        { state: "West Bengal", count: 15000, percentage: 100 },
-        { state: "Assam", count: 12000, percentage: 80 },
-        { state: "Odisha", count: 10500, percentage: 70 },
-        { state: "Bihar", count: 9000, percentage: 60 },
-      ])
-
-    } catch (error) {
-      console.error("Failed to fetch dashboard data", error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  // Fetch on mount and when filters change
-  useEffect(() => {
-    fetchData()
-  }, [selectedDistrict, selectedOrigin])
-
-  // Helper for Skeleton Loading
-  const LoadingCard = () => (
-    <Card className="border-l-4 border-gray-200">
-      <CardContent className="p-5">
-        <div className="flex justify-between">
-          <div className="space-y-3 w-full">
-            <Skeleton className="h-4 w-24 bg-gray-200" />
-            <Skeleton className="h-8 w-32 bg-gray-200" />
-            <Skeleton className="h-4 w-20 bg-gray-200" />
-          </div>
-          <Skeleton className="h-12 w-12 rounded-xl bg-gray-200" />
-        </div>
-      </CardContent>
-    </Card>
-  )
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      
-      {/* 1. CONTENT TOOLBAR */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center bg-white p-4 rounded-xl border shadow-sm sticky top-0 z-10">
-        
-        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-          <div className="flex items-center gap-2 text-sm font-semibold text-gray-700 bg-gray-100 px-3 py-2 rounded-md">
-            <Filter className="h-4 w-4 text-blue-600" />
-            Active Filters:
+    <div className="min-h-screen bg-gray-50">
+      <div className="flex relative">
+        {/* Main Content */}
+        <main className="flex-1 p-6">
+          {/* Metrics Cards */}
+          <div className="grid grid-cols-4 gap-4 mb-6">
+            {/* Card 1 */}
+            <div className="bg-white rounded-lg p-6 border border-gray-200">
+              <div className="flex items-start justify-between mb-4">
+                <Users className="text-blue-400" size={28} />
+                <span className="text-green-500 text-sm font-semibold">+12.5%</span>
+              </div>
+              <p className="text-gray-500 text-sm mb-1">Total Migrant Workers</p>
+              <p className="text-3xl font-bold text-gray-900 mb-1">48,247</p>
+              <p className="text-xs text-gray-400">Registered in Kerala</p>
+            </div>
+
+            {/* Card 2 */}
+            <div className="bg-white rounded-lg p-6 border border-gray-200">
+              <div className="flex items-start justify-between mb-4">
+                <Users className="text-purple-400" size={28} />
+                <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">14 States</span>
+              </div>
+              <p className="text-gray-500 text-sm mb-1">Workers by State</p>
+              <p className="text-3xl font-bold text-gray-900 mb-1">14</p>
+              <p className="text-xs text-gray-400">Origin states tracked</p>
+            </div>
+
+            {/* Card 3 */}
+            <div className="bg-white rounded-lg p-6 border border-gray-200">
+              <div className="flex items-start justify-between mb-4">
+                <AlertTriangle className="text-red-400" size={28} />
+                <span className="text-red-500 text-sm font-semibold">Alert</span>
+              </div>
+              <p className="text-gray-500 text-sm mb-1">High-Risk Workers Flagged</p>
+              <p className="text-3xl font-bold text-gray-900 mb-1">1,847</p>
+              <p className="text-xs text-gray-400">Require immediate attention</p>
+            </div>
+
+            {/* Card 4 */}
+            <div className="bg-white rounded-lg p-6 border border-gray-200">
+              <div className="flex items-start justify-between mb-4">
+                <CheckCircle className="text-green-400" size={28} />
+                <span className="text-green-500 text-xs font-semibold">Live</span>
+              </div>
+              <p className="text-gray-500 text-sm mb-1">Active Registrations Today</p>
+              <p className="text-3xl font-bold text-gray-900 mb-1">342</p>
+              <p className="text-xs text-gray-400">Updated 5 mins ago</p>
+            </div>
           </div>
           
           <select 
@@ -109,208 +69,390 @@ export default function SehatSetuDashboard() {
             <option>Kozhikode</option>
           </select>
 
-          <select 
-            value={selectedOrigin}
-            onChange={(e) => setSelectedOrigin(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 w-[150px] bg-white h-9 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-          >
-            <option>All Origin States</option>
-            <option>West Bengal</option>
-            <option>Assam</option>
-            <option>Odisha</option>
-          </select>
-        </div>
+          {/* Map Section */}
+          <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+            <div className="flex gap-12">
+              {/* State Overview Card */}
+              <div className="w-64 flex-shrink-0">
+                <h3 className="text-lg font-bold text-gray-900 mb-6">State Overview</h3>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-            <Button variant="outline" size="sm" className="h-9" onClick={fetchData} disabled={isLoading}>
-              <RefreshCcw className={`h-3.5 w-3.5 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-              Refresh
-            </Button>
-            <Button size="sm" className="bg-blue-600 hover:bg-blue-700 h-9 shadow-md transition-transform active:scale-95">
-              <Download className="h-3.5 w-3.5 mr-2" />
-              Export
-            </Button>
-        </div>
-      </div>
-
-      {/* 2. KEY METRICS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {isLoading ? (
-          <>
-            <LoadingCard />
-            <LoadingCard />
-            <LoadingCard />
-            <LoadingCard />
-          </>
-        ) : (
-          <>
-            {/* Card 1: Total Workers */}
-            <Card className="border-l-4 border-blue-500 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-              <CardContent className="p-5">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Total Migrant Workers</p>
-                    <h3 className="text-3xl font-extrabold text-gray-900 mt-2">
-                        {/* Adding Indian Locale formatting */}
-                        {stats?.totalWorkers.toLocaleString('en-IN')}
-                    </h3>
-                    <p className="text-sm text-gray-600 mt-1">Registered in Kerala</p>
-                    <div className="flex items-center gap-1 mt-2 text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full w-fit">
-                      <TrendingUp className="h-3 w-3" />
-                      +{stats?.workersTrend}% this week
+                {/* Total Workers */}
+                <div className="mb-4 pb-4 border-b border-gray-200">
+                  <p className="text-xs text-gray-600 font-medium mb-3">Total Workers</p>
+                  <div className="flex items-end justify-between">
+                    <p className="text-2xl font-bold text-gray-900">2,847,593</p>
+                    <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white text-lg flex-shrink-0">
+                      👥
                     </div>
                   </div>
-                  <div className="p-3 rounded-xl bg-blue-50 text-blue-600">
-                    <Users className="h-6 w-6" />
-                  </div>
                 </div>
-              </CardContent>
-            </Card>
 
-            {/* Card 2: States Count */}
-            <Card className="border-l-4 border-purple-500 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-              <CardContent className="p-5">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Workers by State</p>
-                    <h3 className="text-3xl font-extrabold text-gray-900 mt-2">{stats?.statesCount}</h3>
-                    <p className="text-sm text-gray-600 mt-1">Origin states tracked</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <span className="text-xs bg-purple-50 text-purple-700 px-2 py-1 rounded font-medium">Diverse Demographics</span>
+                {/* High-Risk Workers */}
+                <div className="mb-4 pb-4 border-b border-gray-200">
+                  <p className="text-xs text-gray-600 font-medium mb-3">High-Risk Workers</p>
+                  <div className="flex items-end justify-between">
+                    <p className="text-2xl font-bold text-gray-900">487,234</p>
+                    <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center text-white text-lg flex-shrink-0">
+                      ⚠️
                     </div>
                   </div>
-                  <div className="p-3 rounded-xl bg-purple-50 text-purple-600">
-                    <MapPin className="h-6 w-6" />
-                  </div>
                 </div>
-              </CardContent>
-            </Card>
 
-            {/* Card 3: High Risk */}
-            <Card className="border-l-4 border-red-500 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-              <CardContent className="p-5">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">High-Risk Workers</p>
-                    <h3 className="text-3xl font-extrabold text-gray-900 mt-2 text-red-600">
-                        {stats?.highRiskCount.toLocaleString('en-IN')}
-                    </h3>
-                    <p className="text-sm text-gray-600 mt-1">Require immediate attention</p>
-                    <div className="flex items-center gap-1 mt-2 text-xs font-medium text-red-600 bg-red-50 px-2 py-1 rounded-full w-fit">
-                      <AlertTriangle className="h-3 w-3" />
-                      Critical Alert
+                {/* Active Cases */}
+                <div className="mb-4 pb-4 border-b border-gray-200">
+                  <p className="text-xs text-gray-600 font-medium mb-3">Active Cases</p>
+                  <div className="flex items-end justify-between">
+                    <p className="text-2xl font-bold text-gray-900">12,847</p>
+                    <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-white text-lg flex-shrink-0">
+                      🏥
                     </div>
                   </div>
-                  <div className="p-3 rounded-xl bg-red-50 text-red-600">
-                    <AlertTriangle className="h-6 w-6" />
-                  </div>
                 </div>
-              </CardContent>
-            </Card>
 
-            {/* Card 4: Active Registrations */}
-            <Card className="border-l-4 border-green-500 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-              <CardContent className="p-5">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Active Registrations</p>
-                    <h3 className="text-3xl font-extrabold text-gray-900 mt-2">{stats?.activeRegistrations}</h3>
-                    <p className="text-sm text-gray-600 mt-1">Updated recently</p>
-                    <div className="flex items-center gap-1 mt-2 text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full w-fit">
-                      <CheckCircle className="h-3 w-3" />
-                      Live Tracking
+                {/* Districts Monitored */}
+                <div className="mb-4">
+                  <p className="text-xs text-gray-600 font-medium mb-3">Districts Monitored</p>
+                  <div className="flex items-end justify-between">
+                    <p className="text-2xl font-bold text-gray-900">14</p>
+                    <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-white text-lg flex-shrink-0">
+                      📊
                     </div>
                   </div>
-                  <div className="p-3 rounded-xl bg-green-50 text-green-600">
-                    <CheckCircle className="h-6 w-6" />
-                  </div>
                 </div>
-              </CardContent>
-            </Card>
-          </>
-        )}
-      </div>
 
-      {/* 3. MAP SECTION (KEPT EXACTLY AS REQUESTED) */}
-      <Card className="shadow-md border-0">
-        <CardHeader className="pb-3 border-b border-gray-100">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-              <h3 className="text-xl font-bold text-gray-900">Kerala State Health & Worker Distribution Map</h3>
-              <p className="text-sm text-gray-500">Real-time worker density and health status by district</p>
+                {/* Last Updated */}
+                <div className="mt-6 flex items-center gap-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <p className="text-xs text-gray-600 font-medium">Last updated: 2 minutes ago</p>
+                </div>
               </div>
-              <div className="flex gap-2">
-              <input type="date" className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700" />
-              </div>
-          </div>
-        </CardHeader>
-        <CardContent className="p-6">
-          {/* 🚀 NEW INTEGRATION POINT */}
-          <div className="h-96">
-              <KeralaHeatmap />
-          </div>
-          {/* ... rest of the legend and divs ... */}
-          <div className="mt-6 flex gap-8 flex-wrap">
-              <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-green-500 rounded shadow-sm"></div>
-                  <span className="text-sm text-gray-700 font-medium">Healthy</span>
-              </div>
-              <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-yellow-400 rounded shadow-sm"></div>
-                  <span className="text-sm text-gray-700 font-medium">Rising Cases</span>
-              </div>
-              <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-red-500 rounded shadow-sm"></div>
-                  <span className="text-sm text-gray-700 font-medium">High-Risk</span>
-              </div>
-              <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-blue-500 rounded shadow-sm"></div>
-                  <span className="text-sm text-gray-700 font-medium">Worker Population</span>
-              </div>
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* 4. DYNAMIC CHARTS GRID */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Workers by Origin State */}
-        <Card className="shadow-md border-0">
-          <CardHeader className="pb-3 border-b border-gray-100">
-            <div className="flex items-center justify-between">
-              <h3 className="font-bold text-lg text-gray-900">Workers by Origin State</h3>
-              <button className="text-gray-400 hover:text-gray-600 transition-colors">
-                <MoreVertical size={20} />
-              </button>
+              {/* Kerala Hexagonal Map */}
+              <div className="flex-1 flex items-center justify-center">
+                <svg
+                  viewBox="0 0 500 650"
+                  className="w-full h-auto max-w-md"
+                  style={{ filter: "drop-shadow(0 10px 25px rgba(0,0,0,0.15))" }}
+                >
+                  {/* Top - Kasaragod/Kannur region - Green */}
+                  <polygon
+                    points="250,40 290,60 310,100 290,130 250,140 210,130 190,100 210,60"
+                    fill="#10b981"
+                    stroke="white"
+                    strokeWidth="3"
+                  />
+                  <text
+                    x="250"
+                    y="95"
+                    fontSize="16"
+                    fill="white"
+                    fontWeight="bold"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                  >
+                    145K
+                  </text>
+
+                  {/* Right Upper - Kannur/Kozhikode - Red */}
+                  <polygon
+                    points="330,100 370,120 390,160 370,190 330,190 310,160"
+                    fill="#ef4444"
+                    stroke="white"
+                    strokeWidth="3"
+                  />
+                  <text
+                    x="350"
+                    y="150"
+                    fontSize="14"
+                    fill="white"
+                    fontWeight="bold"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                  >
+                    267K
+                  </text>
+
+                  {/* Left Upper - Wayanad - Green */}
+                  <polygon
+                    points="170,100 210,80 230,120 210,150 170,150 150,120"
+                    fill="#10b981"
+                    stroke="white"
+                    strokeWidth="3"
+                  />
+                  <text
+                    x="190"
+                    y="120"
+                    fontSize="14"
+                    fill="white"
+                    fontWeight="bold"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                  >
+                    78K
+                  </text>
+
+                  {/* Center Upper - Kozhikode - Yellow */}
+                  <polygon
+                    points="250,150 290,140 330,160 310,200 270,210 230,190"
+                    fill="#fbbf24"
+                    stroke="white"
+                    strokeWidth="3"
+                  />
+                  <text
+                    x="280"
+                    y="180"
+                    fontSize="15"
+                    fill="white"
+                    fontWeight="bold"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                  >
+                    235K
+                  </text>
+
+                  {/* Left Middle - Malappuram - Red */}
+                  <polygon
+                    points="170,160 210,150 240,180 220,220 180,220 150,190"
+                    fill="#ef4444"
+                    stroke="white"
+                    strokeWidth="3"
+                  />
+                  <text
+                    x="195"
+                    y="190"
+                    fontSize="14"
+                    fill="white"
+                    fontWeight="bold"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                  >
+                    312K
+                  </text>
+
+                  {/* Right Middle - Palakkad - Yellow */}
+                  <polygon
+                    points="330,200 370,190 400,210 390,250 350,260 310,240"
+                    fill="#fbbf24"
+                    stroke="white"
+                    strokeWidth="3"
+                  />
+                  <text
+                    x="360"
+                    y="225"
+                    fontSize="14"
+                    fill="white"
+                    fontWeight="bold"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                  >
+                    108K
+                  </text>
+
+                  {/* Center - Thrissur - Red */}
+                  <polygon
+                    points="250,220 290,210 330,240 310,280 270,290 230,270"
+                    fill="#ef4444"
+                    stroke="white"
+                    strokeWidth="3"
+                  />
+                  <text
+                    x="280"
+                    y="255"
+                    fontSize="15"
+                    fill="white"
+                    fontWeight="bold"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                  >
+                    388K
+                  </text>
+
+                  {/* Left Lower-Middle - Ernakulam - Green */}
+                  <polygon
+                    points="170,220 210,220 250,240 230,280 190,280 150,260"
+                    fill="#10b981"
+                    stroke="white"
+                    strokeWidth="3"
+                  />
+                  <text
+                    x="200"
+                    y="250"
+                    fontSize="14"
+                    fill="white"
+                    fontWeight="bold"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                  >
+                    64K
+                  </text>
+
+                  {/* Right Lower-Middle - Idukki - Yellow */}
+                  <polygon
+                    points="330,260 370,250 400,270 390,310 350,320 310,300"
+                    fill="#fbbf24"
+                    stroke="white"
+                    strokeWidth="3"
+                  />
+                  <text
+                    x="360"
+                    y="285"
+                    fontSize="14"
+                    fill="white"
+                    fontWeight="bold"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                  >
+                    168K
+                  </text>
+
+                  {/* Center Lower-Middle - Kottayam - Green */}
+                  <polygon
+                    points="250,290 290,280 330,300 310,340 270,350 230,330"
+                    fill="#10b981"
+                    stroke="white"
+                    strokeWidth="3"
+                  />
+                  <text
+                    x="280"
+                    y="315"
+                    fontSize="14"
+                    fill="white"
+                    fontWeight="bold"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                  >
+                    97K
+                  </text>
+
+                  {/* Left Lower - Alappuzha - Yellow */}
+                  <polygon
+                    points="170,280 210,280 250,300 230,340 190,340 150,320"
+                    fill="#fbbf24"
+                    stroke="white"
+                    strokeWidth="3"
+                  />
+                  <text
+                    x="205"
+                    y="310"
+                    fontSize="14"
+                    fill="white"
+                    fontWeight="bold"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                  >
+                    188K
+                  </text>
+
+                  {/* Lower Center - Pathanamthitta - Red */}
+                  <polygon
+                    points="250,360 290,350 330,370 310,410 270,420 230,400"
+                    fill="#ef4444"
+                    stroke="white"
+                    strokeWidth="3"
+                  />
+                  <text
+                    x="280"
+                    y="385"
+                    fontSize="14"
+                    fill="white"
+                    fontWeight="bold"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                  >
+                    388K
+                  </text>
+
+                  {/* Bottom - Thiruvananthapuram - Red */}
+                  <polygon
+                    points="250,430 290,420 330,440 310,480 270,490 230,470"
+                    fill="#ef4444"
+                    stroke="white"
+                    strokeWidth="3"
+                  />
+                  <text
+                    x="280"
+                    y="455"
+                    fontSize="15"
+                    fill="white"
+                    fontWeight="bold"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                  >
+                    298K
+                  </text>
+                </svg>
+              </div>
             </div>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="space-y-6">
-              {isLoading ? (
-                 // Simple loading skeleton for the list
-                 [1, 2, 3, 4].map(i => (
-                    <div key={i} className="space-y-2">
-                        <div className="flex justify-between"><Skeleton className="h-4 w-20 bg-gray-100"/><Skeleton className="h-4 w-10 bg-gray-100"/></div>
-                        <Skeleton className="h-2 w-full bg-gray-100" />
-                    </div>
-                 ))
-              ) : (
-                stateDistribution.map((item, index) => (
-                  <div key={item.state} className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-gray-700">{item.state}</span>
-                      <span className="text-sm font-bold text-gray-900">
-                        {item.count >= 1000 ? `${(item.count / 1000).toFixed(1)}k` : item.count}
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
-                      <div 
-                        className={`h-full rounded-full transition-all duration-1000 ease-out ${
-                            index % 2 === 0 ? 'bg-blue-600' : 'bg-blue-400'
-                        }`} 
-                        style={{ width: `${item.percentage}%` }}
-                      ></div>
-                    </div>
+
+            {/* Legend */}
+            <div className="mt-8 pt-6 border-t border-gray-200 flex gap-12">
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-green-500 rounded"></div>
+                <span className="text-sm text-gray-700 font-medium">Healthy</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-yellow-400 rounded"></div>
+                <span className="text-sm text-gray-700 font-medium">Moderate</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-red-500 rounded"></div>
+                <span className="text-sm text-gray-700 font-medium">High-Risk</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Charts Grid */}
+          <div className="grid grid-cols-3 gap-6 mt-6">
+            {/* Workers by Origin State - Bar Chart */}
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-bold text-gray-900">Workers by Origin State</h3>
+                <button className="text-gray-400 hover:text-gray-600">
+                  <MoreVertical size={20} />
+                </button>
+              </div>
+              <div className="space-y-4">
+                {/* West Bengal */}
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium text-gray-700">West Bengal</span>
+                    <span className="text-sm font-bold text-gray-900">15k</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="bg-blue-600 h-2 rounded-full" style={{ width: "100%" }}></div>
+                  </div>
+                </div>
+
+                {/* Assam */}
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium text-gray-700">Assam</span>
+                    <span className="text-sm font-bold text-gray-900">12k</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="bg-blue-500 h-2 rounded-full" style={{ width: "80%" }}></div>
+                  </div>
+                </div>
+
+                {/* Odisha */}
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium text-gray-700">Odisha</span>
+                    <span className="text-sm font-bold text-gray-900">10.5k</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="bg-blue-400 h-2 rounded-full" style={{ width: "70%" }}></div>
+                  </div>
+                </div>
+
+                {/* Bihar */}
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium text-gray-700">Bihar</span>
+                    <span className="text-sm font-bold text-gray-900">9k</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="bg-blue-300 h-2 rounded-full" style={{ width: "60%" }}></div>
                   </div>
                 ))
               )}
@@ -350,107 +492,235 @@ export default function SehatSetuDashboard() {
                     <span className="text-sm text-gray-600 font-medium">{item.label}</span>
                     <span className="text-sm font-bold text-gray-900 ml-auto">{item.val}</span>
                 </div>
-              ))}
+              </div>
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Monthly Trend (Static SVG preserved) */}
-        <Card className="shadow-md border-0">
-          <CardHeader className="pb-3 border-b border-gray-100">
-            <div className="flex items-center justify-between">
-              <h3 className="font-bold text-lg text-gray-900">Monthly Registration Trend</h3>
-              <button className="text-gray-400 hover:text-gray-600">
-                <MoreVertical size={20} />
+            {/* Occupation Distribution - Donut Chart */}
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-bold text-gray-900">Occupation Distribution</h3>
+                <button className="text-gray-400 hover:text-gray-600">
+                  <MoreVertical size={20} />
+                </button>
+              </div>
+              <div className="flex items-center justify-center mb-6">
+                <svg viewBox="0 0 200 200" className="w-48 h-48">
+                  {/* Construction - Blue - 42% */}
+                  <circle
+                    cx="100"
+                    cy="100"
+                    r="80"
+                    fill="none"
+                    stroke="#2563eb"
+                    strokeWidth="40"
+                    strokeDasharray="211 503"
+                    transform="rotate(-90 100 100)"
+                  />
+                  {/* Manufacturing - Orange - 23% */}
+                  <circle
+                    cx="100"
+                    cy="100"
+                    r="80"
+                    fill="none"
+                    stroke="#f97316"
+                    strokeWidth="40"
+                    strokeDasharray="115 503"
+                    strokeDashoffset="-211"
+                    transform="rotate(-90 100 100)"
+                  />
+                  {/* Services - Purple - 17% */}
+                  <circle
+                    cx="100"
+                    cy="100"
+                    r="80"
+                    fill="none"
+                    stroke="#a855f7"
+                    strokeWidth="40"
+                    strokeDasharray="86 503"
+                    strokeDashoffset="-326"
+                    transform="rotate(-90 100 100)"
+                  />
+                  {/* Hospitality - Green - 18% */}
+                  <circle
+                    cx="100"
+                    cy="100"
+                    r="80"
+                    fill="none"
+                    stroke="#10b981"
+                    strokeWidth="40"
+                    strokeDasharray="91 503"
+                    strokeDashoffset="-412"
+                    transform="rotate(-90 100 100)"
+                  />
+                  {/* Center white circle */}
+                  <circle cx="100" cy="100" r="50" fill="white" />
+                </svg>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
+                  <span className="text-sm text-gray-700">Construction</span>
+                  <span className="text-sm font-bold text-gray-900 ml-auto">42%</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+                  <span className="text-sm text-gray-700">Manufacturing</span>
+                  <span className="text-sm font-bold text-gray-900 ml-auto">23%</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                  <span className="text-sm text-gray-700">Services</span>
+                  <span className="text-sm font-bold text-gray-900 ml-auto">17%</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <span className="text-sm text-gray-700">Hospitality</span>
+                  <span className="text-sm font-bold text-gray-900 ml-auto">18%</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Monthly Registration Trend - Line Chart */}
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-bold text-gray-900">Monthly Registration Trend</h3>
+                <button className="text-gray-400 hover:text-gray-600">
+                  <MoreVertical size={20} />
+                </button>
+              </div>
+              <svg viewBox="0 0 400 180" className="w-full h-40">
+                {/* Grid lines */}
+                <line x1="40" y1="30" x2="380" y2="30" stroke="#e5e7eb" strokeWidth="1" />
+                <line x1="40" y1="60" x2="380" y2="60" stroke="#e5e7eb" strokeWidth="1" />
+                <line x1="40" y1="90" x2="380" y2="90" stroke="#e5e7eb" strokeWidth="1" />
+                <line x1="40" y1="120" x2="380" y2="120" stroke="#e5e7eb" strokeWidth="1" />
+                <line x1="40" y1="150" x2="380" y2="150" stroke="#e5e7eb" strokeWidth="1" />
+
+                {/* Area fill */}
+                <path
+                  d="M 50 135 L 80 110 L 110 85 L 140 60 L 170 50 L 200 35 L 230 50 L 260 70 L 290 85 L 320 95 L 350 105 L 370 115 L 380 150 L 40 150 Z"
+                  fill="#3b82f6"
+                  opacity="0.1"
+                />
+
+                {/* Line */}
+                <polyline
+                  points="50,135 80,110 110,85 140,60 170,50 200,35 230,50 260,70 290,85 320,95 350,105 370,115"
+                  fill="none"
+                  stroke="#3b82f6"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+
+                {/* X-axis labels */}
+                <text x="50" y="170" fontSize="11" fill="#6b7280" textAnchor="middle">
+                  Jan
+                </text>
+                <text x="110" y="170" fontSize="11" fill="#6b7280" textAnchor="middle">
+                  Mar
+                </text>
+                <text x="170" y="170" fontSize="11" fill="#6b7280" textAnchor="middle">
+                  May
+                </text>
+                <text x="230" y="170" fontSize="11" fill="#6b7280" textAnchor="middle">
+                  Jul
+                </text>
+                <text x="290" y="170" fontSize="11" fill="#6b7280" textAnchor="middle">
+                  Sep
+                </text>
+                <text x="350" y="170" fontSize="11" fill="#6b7280" textAnchor="middle">
+                  Nov
+                </text>
+
+                {/* Y-axis labels */}
+                <text x="30" y="160" fontSize="10" fill="#6b7280" textAnchor="end">
+                  0
+                </text>
+                <text x="30" y="130" fontSize="10" fill="#6b7280" textAnchor="end">
+                  1k
+                </text>
+                <text x="30" y="100" fontSize="10" fill="#6b7280" textAnchor="end">
+                  2.5k
+                </text>
+                <text x="30" y="70" fontSize="10" fill="#6b7280" textAnchor="end">
+                  4k
+                </text>
+                <text x="30" y="40" fontSize="10" fill="#6b7280" textAnchor="end">
+                  5k
+                </text>
+              </svg>
+            </div>
+          </div>
+        </main>
+
+        {/* AI Chat Bot */}
+        <button
+          onClick={() => setIsBotOpen(!isBotOpen)}
+          className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-br from-purple-600 to-purple-700 text-white rounded-full shadow-lg hover:shadow-xl hover:from-purple-700 hover:to-purple-800 flex items-center justify-center transition-all z-40"
+          aria-label="Toggle AI Bot"
+        >
+          {isBotOpen ? <X size={24} /> : <MessageCircle size={24} />}
+        </button>
+
+        {isBotOpen && (
+          <div className="fixed bottom-20 right-6 w-96 bg-white rounded-lg shadow-2xl border border-gray-200 flex flex-col max-h-96 z-40">
+            {/* AI Bot Header */}
+            <div className="bg-gradient-to-br from-purple-600 to-purple-700 rounded-t-lg p-4 text-white">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">🤖</div>
+                <div>
+                  <h3 className="font-bold">SehatSetu AI GovBot</h3>
+                  <p className="text-xs text-purple-100">Government Analytics Assistant</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Chat Content */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {/* Bot Message */}
+              <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center text-white text-sm flex-shrink-0">
+                    🤖
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-gray-900 mb-1">Hello! I'm your SehatSetu AI Assistant.</p>
+                    <p className="text-xs text-gray-600">
+                      I can help you analyze worker data, health trends, and district-wise statistics. How can I assist
+                      you today?
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Action Tabs */}
+            <div className="flex gap-2 p-4 border-t border-gray-200">
+              <button className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs font-medium py-2 px-3 rounded-lg border border-blue-200">
+                Worker stats
+              </button>
+              <button className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs font-medium py-2 px-3 rounded-lg border border-blue-200">
+                Health alerts
               </button>
             </div>
-          </CardHeader>
-          <CardContent className="p-6">
-            <svg viewBox="0 0 400 180" className="w-full h-40">
-              <line x1="40" y1="30" x2="380" y2="30" stroke="#e5e7eb" strokeWidth="1" />
-              <line x1="40" y1="60" x2="380" y2="60" stroke="#e5e7eb" strokeWidth="1" />
-              <line x1="40" y1="90" x2="380" y2="90" stroke="#e5e7eb" strokeWidth="1" />
-              <line x1="40" y1="120" x2="380" y2="120" stroke="#e5e7eb" strokeWidth="1" />
-              <line x1="40" y1="150" x2="380" y2="150" stroke="#e5e7eb" strokeWidth="1" />
 
-              <path
-                d="M 50 135 L 80 110 L 110 85 L 140 60 L 170 50 L 200 35 L 230 50 L 260 70 L 290 85 L 320 95 L 350 105 L 370 115 L 380 150 L 40 150 Z"
-                fill="#3b82f6"
-                opacity="0.1"
-              />
-
-              <polyline
-                points="50,135 80,110 110,85 140,60 170,50 200,35 230,50 260,70 290,85 320,95 350,105 370,115"
-                fill="none"
-                stroke="#3b82f6"
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-
-              <text x="50" y="170" fontSize="11" fill="#6b7280" textAnchor="middle">Jan</text>
-              <text x="110" y="170" fontSize="11" fill="#6b7280" textAnchor="middle">Mar</text>
-              <text x="170" y="170" fontSize="11" fill="#6b7280" textAnchor="middle">May</text>
-              <text x="230" y="170" fontSize="11" fill="#6b7280" textAnchor="middle">Jul</text>
-              <text x="290" y="170" fontSize="11" fill="#6b7280" textAnchor="middle">Sep</text>
-              <text x="350" y="170" fontSize="11" fill="#6b7280" textAnchor="middle">Nov</text>
-            </svg>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* 5. AI Bot Floating Button (Kept as is for overlay) */}
-      <button
-        onClick={() => setIsBotOpen(!isBotOpen)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-br from-purple-600 to-purple-700 text-white rounded-full shadow-lg hover:shadow-xl hover:from-purple-700 hover:to-purple-800 flex items-center justify-center transition-all z-40 transform hover:scale-110 active:scale-95"
-        aria-label="Toggle AI Bot"
-      >
-        {isBotOpen ? <X size={24} /> : <MessageCircle size={24} />}
-      </button>
-
-      {/* AI Bot Window */}
-      {isBotOpen && (
-        <div className="fixed bottom-20 right-6 w-96 bg-white rounded-xl shadow-2xl border border-gray-200 flex flex-col max-h-[500px] z-40 animate-in slide-in-from-bottom-5 duration-300">
-          <div className="bg-gradient-to-br from-purple-600 to-purple-700 rounded-t-xl p-4 text-white">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">🤖</div>
-              <div>
-                <h3 className="font-bold">SehatSetu GovBot</h3>
-                <p className="text-xs text-purple-100">AI Analytics Assistant</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 h-64">
-            <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600 text-sm flex-shrink-0">
-                  🤖
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-semibold text-gray-900 mb-1">Welcome!</p>
-                  <p className="text-xs text-gray-600 leading-relaxed">
-                    I am connected to the live Kerala Migrant Worker database. Ask me about district statistics, health alerts, or registration trends.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="p-3 border-t border-gray-200 bg-white rounded-b-xl">
-             <div className="relative">
-                <input
+            {/* Chat Input Section */}
+            <div className="flex gap-2 p-4 border-t border-gray-200 rounded-b-lg bg-gray-50">
+              <input
                 type="text"
-                placeholder="Ask e.g., 'Show Ernakulam stats'..."
-                className="w-full bg-gray-100 text-sm text-gray-700 placeholder-gray-400 outline-none border border-transparent focus:border-purple-300 focus:ring-2 focus:ring-purple-100 rounded-lg pl-4 pr-10 py-3 transition-all"
-                />
-                <button className="absolute right-2 top-2 bg-purple-600 hover:bg-purple-700 text-white p-1.5 rounded-md transition-colors">
-                <ArrowRight size={14} />
-                </button>
-             </div>
+                placeholder="Ask about worker data..."
+                className="flex-1 bg-white text-sm text-gray-700 placeholder-gray-400 outline-none border border-gray-300 rounded-lg px-3 py-2"
+              />
+              <button className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg flex items-center justify-center">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M8 1v10M4 8l4 4 4-4M2 14h12" stroke="currentColor" strokeWidth="1.5" fill="none" />
+                </svg>
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }
