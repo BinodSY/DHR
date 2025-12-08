@@ -7,6 +7,7 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/s
 import { AppSidebar } from "@/components/app-sidebar"
 import { DynamicHeader } from "@/components/dynamic-header"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { useEffect, useState } from "react"
 import {
   Stethoscope,
   Calendar,
@@ -32,6 +33,12 @@ import { useRouter } from "next/navigation"
 export default function WorkerDashboard() {
   const router = useRouter()
   const isMobile = useIsMobile()
+  const [currentUser, setCurrentUser] = useState<any>(null)
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('currentUser') || 'null')
+    setCurrentUser(user)
+  }, [])
 
   const handleLogout = () => {
     router.push("/")
@@ -66,15 +73,15 @@ export default function WorkerDashboard() {
                   </div>
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold mb-2">Rajesh Kumar Singh</h1>
+                  <h1 className="text-2xl font-bold mb-2">{currentUser?.fullName || "User"}</h1>
                   <div className="flex flex-wrap gap-4 text-sm opacity-90">
                     <span className="flex items-center gap-1">
                       <Calendar className="h-4 w-4" />
-                      Age: 32
+                      Age: {currentUser?.dateOfBirth ? new Date().getFullYear() - new Date(currentUser.dateOfBirth).getFullYear() : "N/A"}
                     </span>
                     <span className="flex items-center gap-1">
                       <User className="h-4 w-4" />
-                      Male
+                      {currentUser?.gender || "N/A"}
                     </span>
                     <span className="flex items-center gap-1">
                       <Heart className="h-4 w-4" />
@@ -82,7 +89,7 @@ export default function WorkerDashboard() {
                     </span>
                     <span className="flex items-center gap-1">
                       <MapPin className="h-4 w-4" />
-                      Mumbai, Maharashtra
+                      {currentUser?.currentAddress || "N/A"}
                     </span>
                   </div>
                 </div>

@@ -38,16 +38,48 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { RegistrationForm } from "@/components/RegistrationForm"
 
 export default function HealthPortal() {
   const [activeUserType, setActiveUserType] = useState<"worker" | "doctor" | "govt">("worker")
   const [authMethod, setAuthMethod] = useState<"password" | "otp">("password")
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [showRegistration, setShowRegistration] = useState(false)
+  const [loginError, setLoginError] = useState("")
   const router = useRouter()
 
   const handleLogin = () => {
     if (activeUserType === "worker") {
-      router.push("/dashboard/worker")
+      // For worker login, check against registered users
+      const workerAuth = (document.querySelector('input[name="workerAuth"]') as HTMLInputElement)?.value
+      const workerPassword = (document.querySelector('input[name="workerPassword"]') as HTMLInputElement)?.value
+      if (!workerAuth) {
+        setLoginError("Please enter your mobile number or Aadhaar number")
+        return
+      }
+      if (!workerPassword) {
+        setLoginError("Please enter your password")
+        return
+      }
+      if (workerPassword !== "12345") {
+        setLoginError("Invalid password")
+        return
+      }
+
+      // Get registered users from localStorage
+      const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]')
+      const user = registeredUsers.find((u: any) =>
+        u.phoneNumber === workerAuth || u.aadhaarNumber === workerAuth
+      )
+
+      if (user) {
+        // Store current user in localStorage
+        localStorage.setItem('currentUser', JSON.stringify(user))
+        setLoginError("")
+        router.push("/dashboard/worker")
+      } else {
+        setLoginError("User not found. Please register first.")
+      }
     } else if (activeUserType === "govt") {
       router.push("/dashboard/govt")
     } else if (activeUserType === "doctor") {
@@ -342,7 +374,10 @@ export default function HealthPortal() {
             <div className="flex mb-4 sm:mb-6 overflow-x-auto hide-scrollbar">
               <Button
                 className={`flex-1 min-w-[100px] rounded-r-none text-xs sm:text-sm ${activeUserType === "worker" ? "bg-blue-800 text-white" : "bg-transparent border border-gray-300 text-gray-700"}`}
-                onClick={() => setActiveUserType("worker")}
+                onClick={() => {
+                  setActiveUserType("worker")
+                  setLoginError("")
+                }}
               >
                 <User className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                 Worker
@@ -371,10 +406,11 @@ export default function HealthPortal() {
                     <Label htmlFor="workerAuth" className="text-xs sm:text-sm font-medium">
                       Mobile Number / Aadhaar Number <span className="text-red-500">*</span>
                     </Label>
-                    <Input 
-                      id="workerAuth" 
-                      placeholder="Enter mobile number or Aadhaar number" 
+                    <Input
+                      id="workerAuth"
+                      placeholder="Enter mobile number or Aadhaar number"
                       className="mt-1 text-sm sm:text-base h-10 sm:h-11 transition-all-smooth focus:border-blue-500"
+                      onChange={() => setLoginError("")}
                     />
                   </div>
 
@@ -422,12 +458,18 @@ export default function HealthPortal() {
                       <Label htmlFor="workerPassword" className="text-xs sm:text-sm font-medium">
                         Password <span className="text-red-500">*</span>
                       </Label>
-                      <Input 
-                        id="workerPassword" 
-                        type="password" 
-                        placeholder="Enter your password" 
+                      <Input
+                        id="workerPassword"
+                        type="password"
+                        placeholder="Enter your password"
                         className="mt-1 text-sm sm:text-base h-10 sm:h-11 transition-all-smooth focus:border-blue-500"
                       />
+                    </div>
+                  )}
+
+                  {loginError && (
+                    <div className="bg-red-50 border border-red-200 rounded-md p-3">
+                      <p className="text-red-600 text-sm">{loginError}</p>
                     </div>
                   )}
                 </>
@@ -530,9 +572,12 @@ export default function HealthPortal() {
               {/* Registration Link */}
               <div className="text-center text-xs sm:text-sm">
                 Don't have an account?{" "}
-                <a href="#" className="text-blue-600 hover:underline transition-all-smooth">
+                <button
+                  onClick={() => setShowRegistration(true)}
+                  className="text-blue-600 hover:underline transition-all-smooth bg-transparent border-none p-0 cursor-pointer"
+                >
                   Register Now
-                </a>
+                </button>
               </div>
 
               {/* Terms */}
@@ -1100,6 +1145,26 @@ export default function HealthPortal() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
         </svg>
       </button>
+
+      {/* Registration Modal */}
+      {showRegistration && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-4 border-b flex justify-between items-center">
+              <h2 className="text-lg font-semibold text-gray-900">Create Your Account</h2>
+              <button
+                onClick={() => setShowRegistration(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="p-4">
+              <RegistrationForm />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
