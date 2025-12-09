@@ -39,10 +39,40 @@ app.use(cors(corsOptions));
 
 
 
-app.use(express.json({ limit: '10mb' })); // <--- Make sure you parse JSON body with increased limit for audio
+// Enhanced JSON parsing with better error handling
+app.use(express.json({
+  limit: '10mb',
+  verify: (req, res, buf, encoding) => {
+    // Ensure we're parsing JSON properly
+    if (req.url.includes('/api/translate') && req.method === 'POST') {
+      try {
+        JSON.parse(buf.toString());
+      } catch (e) {
+        throw new Error('Invalid JSON in request body');
+      }
+    }
+  }
+}));
+
+// Raw body parser for specific endpoints if needed
+app.use(express.raw({ type: 'application/json', limit: '10mb' }));
 
 app.get("/", (req, res) => {
   res.send("Hello, welcome to Digital Health Record Backend");
+});
+
+// Test route to verify JSON parsing
+app.post("/api/test-json", (req, res) => {
+  console.log("Test JSON received:", {
+    bodyType: typeof req.body,
+    bodyKeys: req.body ? Object.keys(req.body) : 'undefined',
+    bodyContent: req.body
+  });
+  res.json({
+    success: true,
+    received: req.body,
+    type: typeof req.body
+  });
 });
 
 // API Routes

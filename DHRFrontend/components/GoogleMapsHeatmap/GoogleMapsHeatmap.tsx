@@ -16,7 +16,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import AIAssistant from "./AIAssistant";
 import DistrictPolygon from "./DistrictPolygon";
 import DraggableDistrictCard from "./DraggableDistrictCard";
-import FloatingControls from "./FloatingControls";
 
 const mapContainerStyle = {
   width: "100%",
@@ -298,19 +297,6 @@ const GoogleMapsHeatmap: React.FC<GoogleMapsHeatmapProps> = ({
           )}
 
         </GoogleMap>
-
-        {/* Floating Controls Panel */}
-        <FloatingControls
-          showHeatmap={showHeatmap}
-          onToggleHeatmap={setShowHeatmap}
-          selectedOrigin={selectedOrigin}
-          onOriginChange={setSelectedOrigin}
-          timeRange={timeRange}
-          onTimeRangeChange={setTimeRange}
-          densityThreshold={densityThreshold}
-          onDensityThresholdChange={setDensityThreshold}
-          onExportMap={handleExportMap}
-        />
 
         {/* Draggable District Card */}
         {selectedDistrict && (
